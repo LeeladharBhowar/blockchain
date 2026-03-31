@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | DocuHash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="dashboard-section" class="screen active">
+        <div class="glass-panel dashboard-layout fade-in">
+            
+            <div class="dashboard-header">
+                <div>
+                    <h2 style="border:none; padding:0; margin-bottom: 5px;">Welcome, {{ name }}</h2>
+                    <p class="small-text" style="margin: 0; color: #00d2ff;">System Ready: Awaiting Documents</p>
+                </div>
+                <button id="logout-btn" class="danger-btn"><i class="fa-solid fa-power-off"></i> Logout</button>
+            </div>
+
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-target="view-scan"><i class="fa-solid fa-magnifying-glass"></i> New Scan</button>
+                <button class="tab-btn" data-target="view-history" id="load-history-btn"><i class="fa-solid fa-clock-rotate-left"></i> Scan History</button>
+            </div>
+            
+            <div id="view-scan" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="dashboard-left">
+                        <div class="panel-section-title"><i class="fa-solid fa-cloud-arrow-up"></i> Document Upload</div>
+                        <form id="upload-form">
+                            <div class="file-drop-zone">
+                                <i class="fa-solid fa-file-pdf drop-icon"></i>
+                                <label>1. Main (Parent) File</label>
+                                <p class="hint">The original document to check against.</p>
+                                <input type="file" id="parent-file" accept=".pdf,.txt" required class="file-input">
+                            </div>
+                            <div class="file-drop-zone">
+                                <i class="fa-solid fa-copy drop-icon"></i>
+                                <label>2. Suspect Files (Max 5)</label>
+                                <p class="hint">Select multiple student files holding CTRL/CMD.</p>
+                                <input type="file" id="child-files" accept=".pdf,.txt" multiple required class="file-input">
+                            </div>
+                            <button type="submit" id="compare-btn" class="primary-btn w-100 mt-20">
+                                <i class="fa-solid fa-fingerprint"></i> Generate Hashes & Compare
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="dashboard-right">
+                        <div class="panel-section-title"><i class="fa-solid fa-chart-radar"></i> Analysis Results</div>
+                        <div id="results-area">
+                            <div id="results-list">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                    <p>Upload files and run the scanner to view similarity reports.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-history" class="tab-content" style="display: none;">
+                <div class="panel-section-title"><i class="fa-solid fa-database"></i> Previous Scans</div>
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date Scanned</th>
+                                <th>Parent File</th>
+                                <th>Suspect File</th>
+                                <th>Similarity</th>
+                                <th>Hidden Author</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
