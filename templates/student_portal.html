@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Portal | DocuHash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="screen active">
+        <div class="glass-panel dashboard-layout fade-in">
+            <div class="dashboard-header">
+                <div>
+                    <h2 style="border:none; padding:0; margin-bottom: 5px;">Student Portal</h2>
+                    <p class="small-text" style="margin: 0; color: #00d2ff;">Logged in as: {{ email }}</p>
+                </div>
+                <button id="logout-btn" class="danger-btn"><i class="fa-solid fa-power-off"></i> Logout</button>
+            </div>
+            
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div class="panel-section-title"><i class="fa-solid fa-cloud-arrow-up"></i> Submit Assignments</div>
+                <form id="student-upload-form">
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: #fff; font-weight: 600; font-size: 0.9rem;">Select Assignment / Experiment:</label>
+                        <select id="assignment-tag" style="width: 100%; padding: 12px; margin-top: 5px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: #fff; border-radius: 8px; outline: none; font-family: 'Poppins', sans-serif;">
+                            <option value="Exp 1">Experiment 1</option>
+                            <option value="Exp 2">Experiment 2</option>
+                            <option value="Exp 3">Experiment 3</option>
+                            <option value="Exp 4">Experiment 4</option>
+                            <option value="Exp 5">Experiment 5</option>
+                            <option value="General">General / Other</option>
+                        </select>
+                    </div>
+                    <div class="file-drop-zone">
+                        <i class="fa-solid fa-file-arrow-up drop-icon"></i>
+                        <label>Select files (.pdf, .txt)</label>
+                        <p class="hint">Hold CTRL/CMD to select up to 10 files.</p>
+                        <input type="file" id="student-files" accept=".pdf,.txt" multiple required class="file-input">
+                    </div>
+                    <button type="submit" id="student-submit-btn" class="primary-btn w-100 mt-20">
+                        <i class="fa-solid fa-upload"></i> Upload to Server
+                    </button>
+                </form>
+                <p id="upload-msg" style="text-align:center; margin-top:15px; font-weight:bold;"></p>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

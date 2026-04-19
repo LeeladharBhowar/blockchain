@@ -1,103 +1,42 @@
-// static/script.js
-
-// Wait for the HTML to fully load before running scripts
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ==========================================
-    // 1. WELCOME PAGE LOGIC
-    // ==========================================
-    if (window.location.pathname === '/') {
-        // Allow user to press 'Enter' to go to the login page
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                window.location.href = '/login';
-            }
+    // ================= GLOBAL LOGOUT =================
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/'; 
         });
     }
 
-    // ==========================================
-    // 2. REGISTRATION PAGE LOGIC
-    // ==========================================
+    // ================= WELCOME PAGE =================
+    if (window.location.pathname === '/') {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') window.location.href = '/student'; 
+        });
+    }
+
+    // ================= ADMIN AUTH =================
     const regForm = document.getElementById('register-form');
     if (regForm) {
-        const regPass = document.getElementById('reg-pass');
-        const meterBar = document.getElementById('meter-bar');
-        const meterText = document.getElementById('meter-text');
-        const regSubmitBtn = document.getElementById('reg-submit-btn');
-
-        const rules = {
-            length: { regex: /.{8,}/, el: document.getElementById('rule-length') },
-            upper: { regex: /[A-Z]/, el: document.getElementById('rule-upper') },
-            number: { regex: /[0-9]/, el: document.getElementById('rule-number') },
-            special: { regex: /[@$!%*?&]/, el: document.getElementById('rule-special') }
-        };
-
-        // Password Strength Meter
-        regPass.addEventListener('input', (e) => {
-            const val = e.target.value;
-            let strength = 0;
-
-            for (const key in rules) {
-                if (rules[key].regex.test(val)) {
-                    rules[key].el.className = 'rule-valid';
-                    strength++;
-                } else {
-                    rules[key].el.className = 'rule-invalid';
-                }
-            }
-
-            if (val.length === 0) {
-                meterBar.style.width = '0%';
-                meterText.innerText = '';
-                regSubmitBtn.disabled = true;
-            } else if (strength <= 2) {
-                meterBar.style.width = '33%';
-                meterBar.style.background = '#ff7675';
-                meterText.innerText = 'Weak';
-                meterText.style.color = '#ff7675';
-                regSubmitBtn.disabled = true;
-            } else if (strength === 3) {
-                meterBar.style.width = '66%';
-                meterBar.style.background = '#fdcb6e';
-                meterText.innerText = 'Medium';
-                meterText.style.color = '#fdcb6e';
-                regSubmitBtn.disabled = true;
-            } else if (strength === 4) {
-                meterBar.style.width = '100%';
-                meterBar.style.background = '#00b894';
-                meterText.innerText = 'Strong';
-                meterText.style.color = '#00b894';
-                regSubmitBtn.disabled = false; // Enable only if strong
-            }
-        });
-
-        // Submit Registration
         regForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
-            const password = regPass.value;
+            const password = document.getElementById('reg-pass').value;
             const authMsg = document.getElementById('auth-msg');
 
             const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
             });
             const data = await res.json();
-            
             authMsg.innerText = data.message;
             authMsg.style.color = data.success ? '#00E676' : '#FF1744';
-            
-            if (data.success) {
-                setTimeout(() => { window.location.href = '/login'; }, 1500);
-            }
+            if (data.success) setTimeout(() => { window.location.href = '/login'; }, 1500);
         });
     }
 
-    // ==========================================
-    // 3. LOGIN PAGE LOGIC
-    // ==========================================
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -107,167 +46,200 @@ document.addEventListener('DOMContentLoaded', () => {
             const authMsg = document.getElementById('auth-msg');
 
             const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            
-            if (data.success) {
-                window.location.href = '/dashboard'; // Redirect to dashboard
-            } else {
-                authMsg.innerText = data.message;
-                authMsg.style.color = '#FF1744';
-            }
+            if (data.success) window.location.href = '/dashboard';
+            else { authMsg.innerText = data.message; authMsg.style.color = '#FF1744'; }
         });
     }
 
-    // ==========================================
-    // 4. DASHBOARD PAGE LOGIC
-    // ==========================================
-    const uploadForm = document.getElementById('upload-form');
-    if (uploadForm) {
-        const logoutBtn = document.getElementById('logout-btn');
-        const resultsList = document.getElementById('results-list');
-        
-        // NEW: History DOM Elements
-        const loadHistoryBtn = document.getElementById('load-history-btn');
-        const historyTbody = document.getElementById('history-tbody');
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+    // ================= STUDENT PORTAL =================
+    const studentLoginForm = document.getElementById('student-login-form');
+    if (studentLoginForm) {
+        studentLoginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('student-email').value;
+            const res = await fetch('/api/student/login', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (data.success) window.location.href = '/student/portal';
+        });
+    }
 
-        // Logout
-        logoutBtn.addEventListener('click', async () => {
-            await fetch('/api/logout', { method: 'POST' });
-            window.location.href = '/login'; // Send back to login
+    const studentUploadForm = document.getElementById('student-upload-form');
+    if (studentUploadForm) {
+        studentUploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const files = document.getElementById('student-files').files;
+            if (files.length > 10) return alert("Maximum 10 files allowed.");
+
+            const formData = new FormData();
+            formData.append('assignment_tag', document.getElementById('assignment-tag').value);
+            for (let i = 0; i < files.length; i++) formData.append('files', files[i]);
+
+            const btn = document.getElementById('student-submit-btn');
+            const msg = document.getElementById('upload-msg');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Uploading...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/student/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                msg.innerText = data.message;
+                msg.style.color = data.success ? '#00E676' : '#FF1744';
+                if(data.success) studentUploadForm.reset();
+            } catch (err) { msg.innerText = "Upload failed."; msg.style.color = '#FF1744'; } 
+            finally { btn.innerHTML = "<i class='fa-solid fa-upload'></i> Upload to Server"; btn.disabled = false; }
+        });
+    }
+
+    // ================= ADMIN DASHBOARD =================
+    const adminCompareForm = document.getElementById('admin-compare-form');
+    if (adminCompareForm) {
+        const resultsList = document.getElementById('results-list');
+        const historyTbody = document.getElementById('history-tbody');
+        const studentUploadsList = document.getElementById('student-uploads-list');
+
+        async function fetchStudentFiles() {
+            try {
+                const res = await fetch('/api/admin/student-files');
+                const data = await res.json();
+                if (data.success) {
+                    studentUploadsList.innerHTML = '';
+                    if (data.files.length === 0) return studentUploadsList.innerHTML = '<p style="text-align:center; opacity:0.5;">No files found.</p>';
+                    data.files.forEach(f => {
+                        studentUploadsList.innerHTML += `
+                            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">
+                                <input type="checkbox" class="student-file-checkbox" value="${f.filepath}" data-id="${f.id}" data-tag="${f.assignment_tag}" id="file_${f.id}" style="cursor:pointer; width: 18px; height: 18px;">
+                                <label for="file_${f.id}" style="cursor:pointer; display:flex; flex-direction:column; width:100%;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <span style="font-weight:600; color:#fff;">${f.filename}</span>
+                                        <span style="background: rgba(0, 210, 255, 0.2); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: #00d2ff; border: 1px solid #00d2ff;">${f.assignment_tag}</span>
+                                    </div>
+                                    <span style="font-size:0.75rem; color:#ccc; margin-top:3px;">${f.student_email} &bull; ${f.uploaded_at}</span>
+                                </label>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (e) { studentUploadsList.innerHTML = '<p style="color:red;">Error loading files.</p>'; }
+        }
+        fetchStudentFiles(); 
+
+        document.getElementById('batch-select-btn').addEventListener('click', () => {
+            const selectedTag = document.getElementById('batch-select-dropdown').value;
+            if (!selectedTag) return alert("Select an experiment first.");
+            let count = 0;
+            document.querySelectorAll('.student-file-checkbox').forEach(cb => {
+                cb.checked = (cb.dataset.tag === selectedTag);
+                if(cb.checked) count++;
+            });
+            if(count === 0) alert(`No files found for ${selectedTag}.`);
         });
 
-        // NEW: Tab Switching Logic
+        document.getElementById('clear-select-btn').addEventListener('click', () => {
+            document.querySelectorAll('.student-file-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('batch-select-dropdown').value = "";
+        });
+
+        document.getElementById('delete-select-btn').addEventListener('click', async (e) => {
+            const checkedBoxes = document.querySelectorAll('.student-file-checkbox:checked');
+            if (checkedBoxes.length === 0) return alert("Select files to delete.");
+            if (!confirm(`Permanently delete ${checkedBoxes.length} file(s)?`)) return;
+            
+            const fileIds = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.id));
+            e.target.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Deleting...";
+            e.target.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/delete-files', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_ids: fileIds })
+                });
+                const data = await res.json();
+                if (data.success) fetchStudentFiles(); else alert(data.message);
+            } catch (err) { alert("Error deleting files."); } 
+            finally { e.target.innerHTML = "<i class='fa-solid fa-trash'></i> Delete Selected"; e.target.disabled = false; }
+        });
+
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class from all
                 tabBtns.forEach(b => b.classList.remove('active'));
                 tabContents.forEach(c => c.style.display = 'none');
-                
-                // Add active to clicked
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.target).style.display = 'block';
             });
         });
 
-        // NEW: Load History Logic
-        loadHistoryBtn.addEventListener('click', async () => {
+        document.getElementById('load-history-btn').addEventListener('click', async () => {
             historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Loading history...</td></tr>';
-            try {
-                const res = await fetch('/api/history');
-                const data = await res.json();
-                
-                if (data.success) {
-                    historyTbody.innerHTML = '';
-                    if(data.history.length === 0) {
-                        historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; opacity:0.5;">No past scans found.</td></tr>';
-                        return;
-                    }
-
-                    data.history.forEach(item => {
-                        let badgeClass = 'sim-badge-low';
-                        if(item.similarity > 50) badgeClass = 'sim-badge-high';
-                        else if (item.similarity > 20) badgeClass = 'sim-badge-med';
-
-                        historyTbody.innerHTML += `
-                            <tr>
-                                <td style="font-size: 0.85rem; color: #aaa;">${item.scanned_at}</td>
-                                <td><i class="fa-solid fa-file-pdf" style="color:#00d2ff; margin-right:5px;"></i> ${item.parent_filename}</td>
-                                <td><i class="fa-solid fa-file" style="color:#ccc; margin-right:5px;"></i> ${item.child_filename}</td>
-                                <td><span class="${badgeClass}">${item.similarity}%</span></td>
-                                <td style="font-style:italic;">${item.hidden_author}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            } catch (err) {
-                historyTbody.innerHTML = '<tr><td colspan="5" style="color:red; text-align:center;">Error loading history.</td></tr>';
+            const res = await fetch('/api/history');
+            const data = await res.json();
+            if (data.success) {
+                historyTbody.innerHTML = '';
+                if(data.history.length === 0) return historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; opacity:0.5;">No past scans found.</td></tr>';
+                data.history.forEach(item => {
+                    let badgeClass = item.similarity > 50 ? 'sim-badge-high' : (item.similarity > 20 ? 'sim-badge-med' : 'sim-badge-low');
+                    historyTbody.innerHTML += `
+                        <tr>
+                            <td style="font-size: 0.85rem; color: #aaa;">${item.scanned_at}</td>
+                            <td><i class="fa-solid fa-file-pdf" style="color:#00d2ff;"></i> ${item.parent_filename}</td>
+                            <td><i class="fa-solid fa-file" style="color:#ccc;"></i> ${item.child_filename}</td>
+                            <td><span class="${badgeClass}">${item.similarity}%</span></td>
+                            <td style="font-style:italic;">${item.hidden_author}</td>
+                        </tr>
+                    `;
+                });
             }
         });
 
-        // File Comparison Logic
-        uploadForm.addEventListener('submit', async (e) => {
+        adminCompareForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+            const checkedBoxes = document.querySelectorAll('.student-file-checkbox:checked');
+            if (checkedBoxes.length === 0) return alert("Please select student files from the list.");
+            const selectedFilePaths = Array.from(checkedBoxes).map(cb => cb.value).join(',');
             const parentFile = document.getElementById('parent-file').files[0];
-            const childFiles = document.getElementById('child-files').files;
-
-            if (childFiles.length > 5) {
-                alert("Please select a maximum of 5 files to compare.");
-                return;
-            }
 
             const formData = new FormData();
             formData.append('parent', parentFile);
-            for (let i = 0; i < childFiles.length; i++) {
-                formData.append('children', childFiles[i]);
-            }
+            formData.append('child_filepaths', selectedFilePaths);
 
             const compareBtn = document.getElementById('compare-btn');
-            compareBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Processing Hashes...";
+            compareBtn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Scanning...";
             compareBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/compare', {
-                    method: 'POST',
-                    body: formData
-                });
+                const res = await fetch('/api/compare', { method: 'POST', body: formData });
                 const data = await res.json();
-
-                if (data.success) {
-                    displayResults(data.results, resultsList);
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                alert("An error occurred during comparison.");
-            } finally {
-                compareBtn.innerHTML = "<i class='fa-solid fa-fingerprint'></i> Generate Hashes & Compare";
-                compareBtn.disabled = false;
-            }
+                if (data.success) displayResults(data.results, resultsList);
+                else alert(data.message);
+            } catch (error) { alert("Error during comparison."); } 
+            finally { compareBtn.innerHTML = "<i class='fa-solid fa-fingerprint'></i> Run Plagiarism Scan"; compareBtn.disabled = false; }
         });
 
-        // Function to render the results WITH Forensic Metadata
         function displayResults(results, container) {
             container.innerHTML = '';
-            
             results.forEach(result => {
                 const card = document.createElement('div');
-                
-                let matchClass = 'match-low';
-                let colorHex = '#00E676'; // Green
-                
-                if (result.similarity > 50) {
-                    matchClass = 'match-high';
-                    colorHex = '#FF1744'; // Red for high match
-                } else if (result.similarity > 20) {
-                    matchClass = 'match-med';
-                    colorHex = '#FFEA00'; // Yellow
-                }
-
+                let matchClass = result.similarity > 50 ? 'match-high' : (result.similarity > 20 ? 'match-med' : 'match-low');
+                let colorHex = result.similarity > 50 ? '#FF1744' : (result.similarity > 20 ? '#FFEA00' : '#00E676');
                 card.className = `result-card ${matchClass} fade-in`;
-                
-                let snippetsHtml = result.similar_content_samples.map(s => `<span class="snippet">"...${s}..."</span>`).join(' ');
-                if (snippetsHtml === '') snippetsHtml = "<span class='snippet'>No significant similarities found.</span>";
-
+                let snippetsHtml = result.similar_content_samples.map(s => `<span class="snippet">"...${s}..."</span>`).join(' ') || "<span class='snippet'>No similarities.</span>";
                 card.innerHTML = `
                     <h4 style="margin-top:0; color: var(--primary);">📄 ${result.filename}</h4>
-                    
                     <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed rgba(0, 210, 255, 0.3);">
-                        <p style="margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary);">🕵️ Digital Forensics</p>
-                        <p style="margin: 0 0 4px 0; font-size: 0.9rem; color: #ccc;">Original Author: <strong style="color: #fff;">${result.hidden_author}</strong></p>
-                        <p style="margin: 0; font-size: 0.9rem; color: #ccc;">Created On: <strong style="color: #fff;">${result.hidden_date}</strong></p>
+                        <p style="margin: 0 0 8px 0; font-size: 0.85rem; color: var(--primary);">🕵️ Forensics</p>
+                        <p style="margin: 0 0 4px 0; font-size: 0.9rem; color: #ccc;">Author: <strong style="color:#fff;">${result.hidden_author}</strong></p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #ccc;">Created On: <strong style="color:#fff;">${result.hidden_date}</strong></p>
                     </div>
-
-                    <p><strong>Similarity Score:</strong> <span style="font-size: 1.3rem; font-weight: bold; color: ${colorHex};">${result.similarity}%</span></p>
-                    
-                    <p style="margin-bottom:5px;"><strong>Similar Snippets:</strong></p>
-                    <div>${snippetsHtml}</div>
+                    <p><strong>Similarity:</strong> <span style="font-size: 1.3rem; font-weight: bold; color: ${colorHex};">${result.similarity}%</span></p>
+                    <p style="margin-bottom:5px;"><strong>Snippets:</strong></p><div>${snippetsHtml}</div>
                 `;
                 container.appendChild(card);
             });

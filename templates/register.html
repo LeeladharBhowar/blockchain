@@ -2,49 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | DocuHash</title>
+    <title>Admin Register | DocuHash</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div id="auth-section" class="screen active">
+    <div class="screen active">
         <div class="glass-panel slide-up">
-            <div id="register-view">
-                <h2>Create Admin Account</h2>
-                <form id="register-form">
-                    <div class="input-group">
-                        <input type="text" id="reg-name" required>
-                        <label>Full Name</label>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" id="reg-email" required>
-                        <label>Email Address</label>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="reg-pass" required>
-                        <label>Password</label>
-                    </div>
-                    
-                    <div class="password-meter">
-                        <div class="meter-bar" id="meter-bar"></div>
-                        <span id="meter-text">Too weak</span>
-                    </div>
-                    <ul class="password-rules">
-                        <li id="rule-length">At least 8 characters</li>
-                        <li id="rule-upper">At least 1 uppercase letter</li>
-                        <li id="rule-number">At least 1 number</li>
-                        <li id="rule-special">At least 1 special character (@$!%*?&)</li>
-                    </ul>
-
-                    <button type="submit" id="reg-submit-btn" class="primary-btn" disabled>Register</button>
-                </form>
-                <p class="switch-auth">Already have an account? <a href="/login" id="show-login">Login here</a></p>
-                <p id="auth-msg"></p>
-            </div>
+            <h2>Register Admin</h2>
+            <form id="register-form">
+                <div class="input-group">
+                    <input type="text" id="reg-name" required>
+                    <label>Full Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" required>
+                    <label>Email Address</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-pass" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit" id="reg-submit-btn" class="primary-btn">Register</button>
+            </form>
+            <p id="auth-msg"></p>
+            <p class="switch-auth">Already have an account? <a href="/login">Login here</a></p>
         </div>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>

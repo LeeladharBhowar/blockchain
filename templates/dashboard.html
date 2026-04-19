@@ -3,10 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | DocuHash</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Admin Dashboard | DocuHash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* ENHANCED UI STYLES FOR DASHBOARD 
+           These override/enhance basic styles for a premium SaaS look.
+        */
+        .dashboard-header {
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .dashboard-tabs {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 12px;
+            display: inline-flex;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+        }
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #8b9bb4;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .tab-btn.active { background: var(--primary); color: #0a0e17; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); font-weight: 600; }
+
+        /* Toolbar / Batch Select Styling */
+        .toolbar-glass {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .custom-select {
+            appearance: none;
+            background: rgba(0, 0, 0, 0.4) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300d2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 12px center;
+            background-size: 16px;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            flex-grow: 1;
+            min-width: 200px;
+            transition: 0.3s;
+        }
+        .custom-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
+        .custom-select option { background: #0a0e17; color: #fff; }
+
+        /* Custom Scrollbar for Uploads */
+        #student-uploads-list::-webkit-scrollbar { width: 8px; }
+        #student-uploads-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
+        #student-uploads-list::-webkit-scrollbar-thumb { background: rgba(0, 210, 255, 0.5); border-radius: 10px; }
+        #student-uploads-list::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Drop Zone Polish */
+        .file-drop-zone {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(0,0,0,0.2));
+            border: 2px dashed rgba(0, 210, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .file-drop-zone:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(0,0,0,0.3));
+            transform: translateY(-2px);
+        }
+
+        /* Results Area Polish */
+        .dashboard-right {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+            min-height: 300px;
+            color: #8b9bb4;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+        }
+
+        /* Toolbar Buttons */
+        .tool-btn {
+            padding: 10px 18px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .btn-outline {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+    </style>
 </head>
 <body>
     <div id="dashboard-section" class="screen active">
@@ -14,65 +141,107 @@
             
             <div class="dashboard-header">
                 <div>
-                    <h2 style="border:none; padding:0; margin-bottom: 5px;">Welcome, {{ name }}</h2>
-                    <p class="small-text" style="margin: 0; color: #00d2ff;">System Ready: Awaiting Documents</p>
+                    <h2 style="border:none; padding:0; margin-bottom: 5px; font-size: 1.8rem;">Admin Workspace</h2>
+                    <p class="small-text" style="margin: 0; color: #00d2ff; font-weight: 500;">
+                        <i class="fa-solid fa-circle-user"></i> Welcome back, {{ name }}
+                    </p>
                 </div>
-                <button id="logout-btn" class="danger-btn"><i class="fa-solid fa-power-off"></i> Logout</button>
+                <button id="logout-btn" class="danger-btn tool-btn" style="padding: 10px 20px;">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </button>
             </div>
 
             <div class="dashboard-tabs">
-                <button class="tab-btn active" data-target="view-scan"><i class="fa-solid fa-magnifying-glass"></i> New Scan</button>
-                <button class="tab-btn" data-target="view-history" id="load-history-btn"><i class="fa-solid fa-clock-rotate-left"></i> Scan History</button>
+                <button class="tab-btn active" data-target="view-scan">
+                    <i class="fa-solid fa-radar-target" style="margin-right: 6px;"></i> Plagiarism Scanner
+                </button>
+                <button class="tab-btn" data-target="view-history" id="load-history-btn">
+                    <i class="fa-solid fa-clock-rotate-left" style="margin-right: 6px;"></i> Scan History
+                </button>
             </div>
             
             <div id="view-scan" class="tab-content active">
                 <div class="dashboard-grid">
+                    
                     <div class="dashboard-left">
-                        <div class="panel-section-title"><i class="fa-solid fa-cloud-arrow-up"></i> Document Upload</div>
-                        <form id="upload-form">
-                            <div class="file-drop-zone">
-                                <i class="fa-solid fa-file-pdf drop-icon"></i>
-                                <label>1. Main (Parent) File</label>
-                                <p class="hint">The original document to check against.</p>
-                                <input type="file" id="parent-file" accept=".pdf,.txt" required class="file-input">
+                        
+                        <div class="panel-section-title">
+                            <i class="fa-solid fa-users-viewfinder"></i> 1. Target Student Files
+                        </div>
+                        
+                        <div class="toolbar-glass">
+                            <select id="batch-select-dropdown" class="custom-select">
+                                <option value="" disabled selected>-- Batch Select Experiment --</option>
+                                <option value="Exp 1">Experiment 1</option>
+                                <option value="Exp 2">Experiment 2</option>
+                                <option value="Exp 3">Experiment 3</option>
+                                <option value="Exp 4">Experiment 4</option>
+                                <option value="Exp 5">Experiment 5</option>
+                                <option value="General">General / Other</option>
+                            </select>
+                            
+                            <button type="button" id="batch-select-btn" class="primary-btn tool-btn">
+                                <i class="fa-solid fa-check-double"></i> Select
+                            </button>
+                            <button type="button" id="clear-select-btn" class="btn-outline tool-btn">
+                                <i class="fa-solid fa-xmark"></i> Clear
+                            </button>
+                            <button type="button" id="delete-select-btn" class="danger-btn tool-btn" style="margin-left: auto;">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                        </div>
+
+                        <div id="student-uploads-list" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; height: 260px; overflow-y: auto; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);">
                             </div>
-                            <div class="file-drop-zone">
-                                <i class="fa-solid fa-copy drop-icon"></i>
-                                <label>2. Suspect Files (Max 5)</label>
-                                <p class="hint">Select multiple student files holding CTRL/CMD.</p>
-                                <input type="file" id="child-files" accept=".pdf,.txt" multiple required class="file-input">
+
+                        <div class="panel-section-title">
+                            <i class="fa-solid fa-key"></i> 2. Master Key Validation
+                        </div>
+                        
+                        <form id="admin-compare-form">
+                            <div class="file-drop-zone" style="padding: 20px; border-radius: 12px;">
+                                <i class="fa-solid fa-file-shield drop-icon" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                <label style="font-size: 1rem;">Upload Master (Parent) Document</label>
+                                <input type="file" id="parent-file" accept=".pdf,.txt" required class="file-input" style="margin-top: 15px;">
                             </div>
-                            <button type="submit" id="compare-btn" class="primary-btn w-100 mt-20">
-                                <i class="fa-solid fa-fingerprint"></i> Generate Hashes & Compare
+                            <button type="submit" id="compare-btn" class="primary-btn w-100 mt-20" style="padding: 16px; font-size: 1.1rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fa-solid fa-fingerprint"></i> Execute Plagiarism Scan
                             </button>
                         </form>
+
                     </div>
 
                     <div class="dashboard-right">
-                        <div class="panel-section-title"><i class="fa-solid fa-chart-radar"></i> Analysis Results</div>
-                        <div id="results-area">
-                            <div id="results-list">
+                        <div class="panel-section-title" style="border-bottom: none; margin-bottom: 10px;">
+                            <i class="fa-solid fa-chart-pie"></i> Analysis Intelligence
+                        </div>
+                        <div id="results-area" style="height: calc(100% - 40px);">
+                            <div id="results-list" style="height: 100%;">
                                 <div class="empty-state">
                                     <i class="fa-solid fa-shield-halved"></i>
-                                    <p>Upload files and run the scanner to view similarity reports.</p>
+                                    <h3 style="color: #fff; margin-bottom: 10px;">System Standby</h3>
+                                    <p style="max-width: 80%; line-height: 1.5;">Select target student files on the left and provide a master key document to generate similarity and forensic reports.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
             <div id="view-history" class="tab-content" style="display: none;">
-                <div class="panel-section-title"><i class="fa-solid fa-database"></i> Previous Scans</div>
-                <div class="history-table-wrapper">
-                    <table class="history-table">
+                <div class="panel-section-title">
+                    <i class="fa-solid fa-server"></i> Cryptographic Ledger (History)
+                </div>
+                <div class="history-table-wrapper" style="background: rgba(0,0,0,0.2); border-radius: 16px; padding: 5px;">
+                    <table class="history-table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th>Date Scanned</th>
-                                <th>Parent File</th>
-                                <th>Suspect File</th>
-                                <th>Similarity</th>
-                                <th>Hidden Author</th>
+                                <th style="border-top-left-radius: 12px;">Timestamp</th>
+                                <th>Master Document</th>
+                                <th>Suspect Document</th>
+                                <th>Match Index</th>
+                                <th style="border-top-right-radius: 12px;">Hidden Metadata</th>
                             </tr>
                         </thead>
                         <tbody id="history-tbody">
@@ -83,7 +252,6 @@
 
         </div>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>

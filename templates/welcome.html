@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | DocuHash</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div id="welcome-section" class="screen active">
+    <div class="screen active">
         <div class="glass-panel text-center fade-in">
             <div class="icon-pulse">🔍</div>
-            <h1>Welcome to DocuHash</h1>
+            <h1>DocuHash</h1>
             <p>The enterprise-grade document similarity and plagiarism detection engine.</p>
-            <p class="small-text">Securely compare files using advanced N-Gram cryptographic hashing.</p>
-            <a href="/login" id="enter-btn" class="primary-btn mt-20" style="display:inline-block; text-decoration:none; box-sizing: border-box;">Enter Application <span class="arrow">→</span></a>
-            <p class="hint">Press <strong>Enter</strong></p>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 35px;">
+                <a href="/student" class="primary-btn" style="text-decoration:none;"><i class="fa-solid fa-user-graduate"></i> Student Portal</a>
+                <a href="/login" class="primary-btn" style="text-decoration:none; background: rgba(0, 210, 255, 0.05); border: 1px solid var(--primary); box-shadow: none;">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i> <span style="color: #fff;">Admin Login</span>
+                </a>
+            </div>
         </div>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>
